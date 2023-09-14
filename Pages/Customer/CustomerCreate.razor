@@ -1,0 +1,198 @@
+﻿@page "/customerCreate"
+@using FUIServerSample.Layer.DataLayer;
+@using FUIServerSample.Layer.ServiceLayer.CustomerServices;
+@using Microsoft.Fast.Components.FluentUI.DesignTokens
+
+<PageTitle>CustomerList</PageTitle>
+
+@inject CustomerService _CustomerService
+@inject IDialogService _dialogService
+
+
+@if (IsLoading == true)
+{
+    <div style="width: 300px; display: grid; grid-gap: 12px; grid-auto-flow: column;">
+        <FluentProgress></FluentProgress>
+    </div>
+}
+
+<br />
+
+<div style="padding: 1.5rem;">
+    <FluentLabel Typo="Typography.Header"> Buat Record Baru </FluentLabel>
+    <br />
+
+    <EditForm Model="@model" OnValidSubmit="@OnValidSubmit">
+
+        <DataAnnotationsValidator />
+        <FluentValidationSummary />
+
+
+        <FluentStack Orientation="Orientation.Vertical">
+            <FluentGrid Spacing="0">
+                <FluentGridItem xs="12">
+                    <FluentGrid>
+                        <FluentGridItem xs="6">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.FirstName" Placeholder="First Name" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.LastName" Placeholder="Last Name" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentTextArea Appearance="FluentInputAppearance.Filled" style="width: 100%;" Rows=3 Cols=80 @bind-Value="model.Address" Placeholder="Address" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <h4>City</h4>
+                            <FluentSelect Appearance="Appearance.Filled" style="width: 50%;" @bind-Value=model.City TOption="string">
+                                <FluentOption>Jakarta</FluentOption>
+                                <FluentOption>Stockton</FluentOption>
+                                <FluentOption>Lyon</FluentOption>
+                                <FluentOption>Other</FluentOption>
+                            </FluentSelect>
+                        @*     <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.City" Placeholder="City" /> *@
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 30%;" @bind-Value="model.Postal_Code" Placeholder="Postal Code" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <h4>Country</h4>
+                            <FluentSelect Appearance="Appearance.Filled" @bind-Value=model.Country TOption="string">
+                                
+                                <FluentOption>Indonesia</FluentOption>
+                                <FluentOption>USA</FluentOption>
+                                <FluentOption>France</FluentOption>
+                                <FluentOption>Other</FluentOption>
+                            </FluentSelect>
+                                                 
+                         </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentRadioGroup Required="true" style="width: 40%;" Name="navigation" @bind-Value=model.Cust_Type>
+                                <label style="color:inherit;" slot="label">
+                                    Customer Type
+                                </label>
+                                <FluentRadio Value=@("1")>Person</FluentRadio>
+                                <FluentRadio Value=@("2")>Company</FluentRadio>
+                            </FluentRadioGroup>
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.Phone" Placeholder="Phone" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.Cellular" Placeholder="Cellular" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.Email" Placeholder="Email" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.Tax_Id" Placeholder="Tax-id" />
+                        </FluentGridItem>
+                        <FluentGridItem xs="6">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" style="width: 100%;" @bind-Value="model.SSN" Placeholder="Social Security Number" />
+                        </FluentGridItem>
+
+                    </FluentGrid>
+                </FluentGridItem>
+            </FluentGrid>
+
+
+        </FluentStack>
+        <br />
+        <FluentGrid Spacing="3" Justify="@Justification">
+            <FluentGridItem xs="12" sm="6">
+                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Submit</FluentButton>
+            </FluentGridItem>
+
+        </FluentGrid>
+
+    </EditForm>
+
+</div>
+
+
+@code {
+    IQueryable<CustomerListDto>? _custList;
+    private bool IsLoading { get; set; } = false;
+    public Customer model { get; set; }
+
+    JustifyContent Justification = JustifyContent.FlexStart;
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        base.OnInitialized();
+
+        init();
+
+    }
+
+    private async void init()
+    {
+        model = new Customer();
+        model.Cust_Type = "1";
+        model.Country = "Indonesia";
+        model.City = "Jakarta";
+        StateHasChanged();
+
+    }
+
+
+    private async void OnValidSubmit()
+    {
+        if (model.FirstName == string.Empty || model.LastName == string.Empty)
+        {
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            await Task.Delay(200);
+
+
+            Customer a = new Customer()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Phone = model.Phone,
+                    Address = model.Address,
+                    City = model.City,
+                    Postal_Code = model.Postal_Code,
+                    Country = model.Country,
+                    Cust_Type = model.Cust_Type,
+                    Cellular = model.Cellular,
+                    Email = model.Email,
+                    Tax_Id = model.Tax_Id,
+                    SSN = model.SSN
+                };
+
+            var cust = _CustomerService.Add(a);
+            IsLoading = false;
+
+            // berikan pesan
+            if (cust != null)
+            {
+                _dialogService.ShowInfo("Data Disimpan", "Save");
+
+            }
+            else
+            {
+                _dialogService.ShowWarning("Gagal Menyimpan!", "Save");
+            }
+
+            cust = null;
+            init();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            string msg = ex.Message;
+            IsLoading = false;
+            return;
+        }
+
+
+
+    }
+
+}

@@ -1,0 +1,80 @@
+﻿@page "/customerCard"
+
+@using FUIServerSample.Layer.ServiceLayer.CustomerServices;
+@using Microsoft.Fast.Components.FluentUI.DesignTokens
+
+<PageTitle>CustomerList</PageTitle>
+
+@inject CustomerService _listCustomerService
+
+<FluentButton Appearance="Appearance.Stealth" IconStart="@(new Icons.Regular.Size16.Button())" OnClick="ShowData">
+    Process
+</FluentButton>
+<br />
+
+@if (IsLoading == true)
+{
+    <div style="width: 300px; display: grid; grid-gap: 12px; grid-auto-flow: column;">
+        <FluentProgress></FluentProgress>
+    </div>
+}
+
+@if (_custList != null)
+{
+    <p>
+        Selamat sekarang anda tidak hanya bisa membuat : Hello World !
+        <FluentEmoji Emoji="Emojis.SmileysEmotion.Color.Default.RollingOnTheFloorLaughing" Width="30px" />
+        <FluentEmoji Emoji="Emojis.SmileysEmotion.Color.Default.RollingOnTheFloorLaughing" Width="30px" />
+        <FluentEmoji Emoji="Emojis.SmileysEmotion.Color.Default.RollingOnTheFloorLaughing" Width="30px" />
+    </p>
+
+    <br />
+    <br />
+    <div>
+        <FluentGrid Spacing="3" Justify="@JustifyContent.FlexStart" Style="background-color: var(--neutral-layer-3);height:350px">
+            @foreach (var item in _custList)
+            {
+                <FluentGridItem xs="12" sm="2">
+
+                    <FluentDesignSystemProvider FillColor="#D6D6D6">
+                        <FluentCard neutral-palette-source="#CABA8C">
+                            <div class="contents" style="padding: 0.5rem;">
+                                <div>
+                                    <medium>&nbsp;@item.FullName</medium> <br />
+                                    <medium>&nbsp;@item.Phone</medium> <br />
+                                </div>
+                            </div>
+                        </FluentCard>
+                    </FluentDesignSystemProvider>
+
+                </FluentGridItem>
+            }
+        </FluentGrid> 
+     
+
+    </div>
+
+   
+
+}
+
+
+@code {
+    IQueryable<CustomerListDto>? _custList;
+    private bool IsLoading { get; set; } = false;
+
+    private async Task ShowData()
+    {
+
+        IsLoading = true;
+        await Task.Delay(200);
+
+
+        _custList = (await _listCustomerService.GetCustomerListAsycn()).AsQueryable();
+
+
+        IsLoading = false;
+
+    }
+
+}

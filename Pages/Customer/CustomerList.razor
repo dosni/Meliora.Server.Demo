@@ -1,0 +1,51 @@
+﻿@page "/customerList"
+@using FUIServerSample.Layer.ServiceLayer.CustomerServices;
+
+<PageTitle>CustomerList</PageTitle>
+
+@inject CustomerService _listCustomerService
+
+<FluentButton Appearance="Appearance.Stealth" IconStart="@(new Icons.Regular.Size16.Button())" OnClick="ShowData">
+    Process
+</FluentButton>
+<br />
+
+@if (IsLoading == true)
+{
+    <div style="width: 300px; display: grid; grid-gap: 12px; grid-auto-flow: column;">
+        <FluentProgress></FluentProgress>
+    </div>
+}
+
+@if (_custList != null)
+{
+    <FluentDataGrid Items="@_custList" ResizableColumns=false GridTemplateColumns="0.2fr 0.2fr"
+                    style="height: 250px;overflow:auto;">
+
+        <PropertyColumn Property="@(c => c.FullName)" Title="Full Name" Align="Align.Start" />
+        <PropertyColumn Property="@(c => c.Phone)" Title="Phone" Align="Align.Start" />
+     
+
+    </FluentDataGrid>
+}
+
+
+@code {
+    IQueryable<CustomerListDto>? _custList;
+    private bool IsLoading { get; set; } = false;
+   
+    private async Task ShowData()
+    {
+
+        IsLoading = true;
+        await Task.Delay(200);
+
+
+         _custList = (await _listCustomerService.GetCustomerListAsycn()).AsQueryable();
+      
+
+        IsLoading = false;
+
+    }
+
+}

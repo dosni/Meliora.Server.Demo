@@ -1,0 +1,43 @@
+﻿@using System.Reflection;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.Routing;
+@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.Fast.Components.FluentUI;
+@using Microsoft.Fast.Components.FluentUI.DesignTokens;
+@using Microsoft.JSInterop;
+
+@inherits LayoutComponentBase
+
+ <main>
+    <div class="page">
+        <FluentMainLayout NavMenuTitle="Navigation menu">
+            <Header>
+                <h3>Sample Fluent UI</h3>
+                <FluentSpacer />
+            </Header>
+            <SubHeader>
+                <p style="padding: 0.5rem;">Fluent UI </p>
+            </SubHeader>
+            <Body>
+                <div class="article">
+                    @Body
+                </div>
+            </Body>
+            <NavMenuContent>
+                <FluentNavMenuLink Icon="@(new Icons.Regular.Size24.Home())" Href="/" Text="Home" />
+                <FluentNavMenuLink Icon="@(new Icons.Regular.Size24.Calculator())" Text="Counter" Href="counter" />
+                <FluentNavMenuLink Icon="@(new Icons.Regular.Size24.WeatherCloudy())" Text="FetchData" Href="FetchData" />
+                  <FluentNavMenuGroup InitiallyExpanded>
+                    <p>Customer</p>
+                    <FluentNavMenuLink Icon="@(new Icons.Regular.Size24.Grid())" Text="Grid" Href="./customerList" />
+                    <FluentNavMenuLink Icon="@(new Icons.Regular.Size24.CardUi())" Text="Card" Href="./customerCard" />
+                    <FluentNavMenuLink Icon="@(new Icons.Regular.Size24.Add())" Text="Create" Href="./customerCreate" />
+                    <FluentNavMenuLink Icon="@(new Icons.Regular.Size24.Edit())" Text="Update" Href="./customerUpdate" />
+                </FluentNavMenuGroup>
+               </NavMenuContent>
+        </FluentMainLayout>
+     
+    </div>
+    <FluentDialogProvider />
+ </main>
+
